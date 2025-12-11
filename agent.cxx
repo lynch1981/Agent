@@ -11,6 +11,8 @@
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
 
+#define DEBUG 0
+
 using json = nlohmann::json;
 
 // ==================== 工具系统 ====================
@@ -89,6 +91,10 @@ private:
             {"messages", messages}
         };
 
+#if DEBUG
+        std::cout<< "request start:\n " << request.dump(4) << std::endl << "--end request\n";
+#endif
+
         if (!tools.empty()) {
             request["tools"] = tools;
         }
@@ -128,8 +134,8 @@ private:
 
             if (block["type"] == "text") {
                 std::cout << "\n🤖 Claude: " << block["text"] << std::endl;
-            }
-            else if (block["type"] == "tool_use") {
+
+            } else if (block["type"] == "tool_use") {
                 has_tool_use = true;
                 std::string tool_name = block["name"];
                 std::string tool_id = block["id"];
@@ -194,6 +200,10 @@ private:
         if (response.empty()) {
             return false;
         }
+
+#if DEBUG
+        std::cout<< "response:\n" << response.dump(4) << std::endl << "--end response\n";
+#endif
 
         return process_response(response, iteration);
     }
